@@ -181,7 +181,7 @@ namespace Assets.MyAssets.Scripts.Match
             bool maxTurnReached = currentSetting.maxTurn < __TURN_INFINITY__
                                   && turnState.IsMaxTurnReached(currentSetting.maxTurn);
 
-            // 조각을 다 털어낸 사람이 승리한다. 조각 수는 자기 턴에만 변하므로(놓으면 -1, 붙으면 +N)
+            // Magnetic Ball을 다 털어낸 사람이 승리한다. Magnetic Ball 수는 자기 턴에만 변하므로(놓으면 -1, 붙으면 +N)
             // 0이 된 사람은 항상 현재 턴 플레이어다.
             if (someoneEmptiedPieces)
             {
@@ -189,7 +189,7 @@ namespace Assets.MyAssets.Scripts.Match
                 turnState.FinishWith(turnState.Current);
                 GameFSM();
             }
-            // 최대 턴까지 아무도 못 털어냈으면 남은 조각이 더 적은 쪽이 승리한다.
+            // 최대 턴까지 아무도 못 털어냈으면 남은 Magnetic Ball이 더 적은 쪽이 승리한다.
             else if (maxTurnReached)
             {
                 isPlaying = false;
@@ -329,7 +329,7 @@ namespace Assets.MyAssets.Scripts.Match
         }
 
         /// <summary>
-        /// 최대 턴까지 승부가 나지 않았을 때의 승자. 남은 조각이 더 적은 쪽이 이기고, 같으면 무승부다.
+        /// 최대 턴까지 승부가 나지 않았을 때의 승자. 남은 Magnetic Ball이 더 적은 쪽이 이기고, 같으면 무승부다.
         /// </summary>
         private E_GameState DecideWinnerByFewestPieces()
         {

@@ -1,6 +1,6 @@
 # Magnetic Chess
 
-보드 위에 자석 공을 놓아 상대의 공을 끌어당기고, 자기 조각을 먼저 0으로 만드는 쪽이 이기는 2인 턴제 보드게임입니다.
+보드 위에 자석 공을 놓아 상대의 공을 끌어당기고, 자기 Magnetic Ball을 먼저 0으로 만드는 쪽이 이기는 2인 턴제 보드게임입니다.
 Google Play에 출시해 운영 중이며, 1인 개발했습니다.
 
 **[🎮 Google Play에서 플레이하기](https://play.google.com/store/apps/details?id=com.developerjw.magenticchess.mobile)**

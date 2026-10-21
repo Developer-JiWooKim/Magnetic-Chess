@@ -992,7 +992,7 @@ private IEnumerator StartTimer()
     // ...
 }
 
-// 승패 · 턴 전환 · 조각 수 증감이 전부 상태머신 API를 거친다
+// 승패 · 턴 전환 · Magnetic Ball 수 증감이 전부 상태머신 API를 거친다
 if (turnState.IsMaxTurnReached(currentSetting.maxTurn)) { isPlaying = false; }
 turnState.FinishWithCurrentPlayerAsWinner();
 turnState.IncreaseTurnCount();
@@ -1055,14 +1055,14 @@ Phase 1~4에서 보고한 검증이 모두 이 상태였다. 대체 수단으로
 
 ### ① 문제 상황
 
-Phase 5 이후 플레이 테스트에서 발견. **최대 턴에 도달해 게임이 끝나면 조각 수와 무관하게 항상 AI(Player_2)가 승자로 표시**됐다.
+Phase 5 이후 플레이 테스트에서 발견. **최대 턴에 도달해 게임이 끝나면 Magnetic Ball 수와 무관하게 항상 AI(Player_2)가 승자로 표시**됐다.
 
 먼저 이 버그가 리팩토링으로 생긴 것인지 확인했다. 리팩토링 이전 커밋(출시판 코드)에 동일한 로직이 있었다 — **출시 당시부터 존재하던 결함**이고, 리팩토링은 동작을 그대로 보존했을 뿐이다.
 
 ### ② 이전 코드
 
 ```csharp
-// 조각이 0이 된 사람이 있으면 종료
+// Magnetic Ball이 0이 된 사람이 있으면 종료
 if (playerList.Find(player => player.PieceCount <= 0) != null)
 {
     isPlaying = false;
@@ -1085,7 +1085,7 @@ if (isPlaying == false)
 }
 ```
 
-두 종료 조건이 하나의 `isPlaying` 플래그로 합쳐진 뒤, 승자를 **무조건 현재 턴 플레이어**로 정하고 있었다. 조각 수 비교가 코드에 아예 없다.
+두 종료 조건이 하나의 `isPlaying` 플래그로 합쳐진 뒤, 승자를 **무조건 현재 턴 플레이어**로 정하고 있었다. Magnetic Ball 수 비교가 코드에 아예 없다.
 
 ### ③ 변경 후 코드
 
@@ -1095,7 +1095,7 @@ bool someoneEmptiedPieces = playerList.Find(player => player.PieceCount <= 0) !=
 bool maxTurnReached = currentSetting.maxTurn < __TURN_INFINITY__
                       && turnState.IsMaxTurnReached(currentSetting.maxTurn);
 
-// 조각을 다 털어낸 사람이 승리한다. 조각 수는 자기 턴에만 변하므로(놓으면 -1, 붙으면 +N)
+// Magnetic Ball을 다 털어낸 사람이 승리한다. Magnetic Ball 수는 자기 턴에만 변하므로(놓으면 -1, 붙으면 +N)
 // 0이 된 사람은 항상 현재 턴 플레이어다.
 if (someoneEmptiedPieces)
 {
@@ -1103,7 +1103,7 @@ if (someoneEmptiedPieces)
     turnState.FinishWith(turnState.Current);
     GameFSM();
 }
-// 최대 턴까지 아무도 못 털어냈으면 남은 조각이 더 적은 쪽이 승리한다.
+// 최대 턴까지 아무도 못 털어냈으면 남은 Magnetic Ball이 더 적은 쪽이 승리한다.
 else if (maxTurnReached)
 {
     isPlaying = false;
@@ -1115,7 +1115,7 @@ else { /* 턴 전환 */ }
 
 ```csharp
 /// <summary>
-/// 최대 턴까지 승부가 나지 않았을 때의 승자. 남은 조각이 더 적은 쪽이 이기고, 같으면 무승부다.
+/// 최대 턴까지 승부가 나지 않았을 때의 승자. 남은 Magnetic Ball이 더 적은 쪽이 이기고, 같으면 무승부다.
 /// </summary>
 private E_GameState DecideWinnerByFewestPieces()
 {
@@ -1150,19 +1150,19 @@ public void FinishWith(E_GameState winner) { WinPlayer = winner; Current = E_Gam
 
 ### ④ 판단 근거
 
-**게임 규칙(사용자 확인):** 번갈아 자석을 놓고(놓을 때마다 조각 -1), 대기 시간 동안 부딪힌 자석 개수가 자기 조각에 추가된다(+N). **최대 턴 전에 자기 조각이 0이 되면 그 사람이 승리**하고, **최대 턴까지 아무도 0이 못 되면 남은 조각이 더 적은 사람이 승리**한다. 즉 조각을 털어내는 것이 목표다.
+**게임 규칙(사용자 확인):** 번갈아 자석을 놓고(놓을 때마다 Magnetic Ball -1), 대기 시간 동안 부딪힌 자석 개수가 자기 Magnetic Ball에 추가된다(+N). **최대 턴 전에 자기 Magnetic Ball이 0이 되면 그 사람이 승리**하고, **최대 턴까지 아무도 0이 못 되면 남은 Magnetic Ball이 더 적은 사람이 승리**한다. 즉 Magnetic Ball을 털어내는 것이 목표다.
 
-**두 증상 중 하나는 사실 정상 동작이었다.** "AI 조각이 0이 되자 AI 승리"도 함께 보고됐는데, 분석해보니 이건 규칙대로다. 조각 수는 **자기 턴에만** 변하므로(놓기 -1, 흡수 +N), 0이 되는 사람은 필연적으로 그 시점의 현재 턴 플레이어다. 따라서 기존의 `winPlayer = gameState`가 이 경우에는 **우연히** 규칙과 일치했다. 이 관계를 코드 주석으로 남겨, 나중에 읽는 사람이 `FinishWith(turnState.Current)`를 보고 의아해하지 않도록 했다.
+**두 증상 중 하나는 사실 정상 동작이었다.** "AI Magnetic Ball이 0이 되자 AI 승리"도 함께 보고됐는데, 분석해보니 이건 규칙대로다. Magnetic Ball 수는 **자기 턴에만** 변하므로(놓기 -1, 흡수 +N), 0이 되는 사람은 필연적으로 그 시점의 현재 턴 플레이어다. 따라서 기존의 `winPlayer = gameState`가 이 경우에는 **우연히** 규칙과 일치했다. 이 관계를 코드 주석으로 남겨, 나중에 읽는 사람이 `FinishWith(turnState.Current)`를 보고 의아해하지 않도록 했다.
 
 **진짜 결함은 최대 턴 경로였다.** `IsMaxTurnReached`는 `Current == Player_2`일 때만 참이므로, 이 경로로 끝나면 승자가 **항상 Player_2로 고정**된다. AI 모드에서는 무조건 AI 승리였다.
 
-**무승부 처리는 규칙에 없어 직접 정했다.** 최대 턴에서 양쪽 조각 수가 같을 수 있는데 규칙에 언급이 없었다. 어느 한쪽을 임의로 고르는 대신 `E_GameState.None`을 승자로 두고 결과 화면에 `DRAW`로 표시하도록 했다.
+**무승부 처리는 규칙에 없어 직접 정했다.** 최대 턴에서 양쪽 Magnetic Ball 수가 같을 수 있는데 규칙에 언급이 없었다. 어느 한쪽을 임의로 고르는 대신 `E_GameState.None`을 승자로 두고 결과 화면에 `DRAW`로 표시하도록 했다.
 
 ### ⑤ 결과
 
-- 최대 턴 종료 시 **조각 수를 실제로 비교**해 승자를 정한다
+- 최대 턴 종료 시 **Magnetic Ball 수를 실제로 비교**해 승자를 정한다
 - 무승부가 표현 가능해졌다(`WINNER - DRAW`)
-- 승자 판정 책임이 분리됐다 — `TurnStateMachine`은 "확정"만 하고, "누가 이겼는가"는 조각 수를 아는 `GameDirector`가 판단한다
+- 승자 판정 책임이 분리됐다 — `TurnStateMachine`은 "확정"만 하고, "누가 이겼는가"는 Magnetic Ball 수를 아는 `GameDirector`가 판단한다
 - `EndBattle()`의 중첩 분기가 한 줄로 축소
 - 컴파일 검증 오류 0개
 
