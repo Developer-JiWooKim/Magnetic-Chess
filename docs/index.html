@@ -31,7 +31,7 @@ img{max-width:100%}
    Magnetic Chess — 포트폴리오
    팔레트는 게임 스크린샷의 실제 화소에서 뽑았다.
      원목 책상 그늘   #17120E  → 지면
-     자석 공 청동 각인 #C9A961  → 물리·자력 관련 강조
+     자석공 청동 각인 #C9A961  → 물리·자력 관련 강조
      타이틀 테두리 민트 #7FD6A0 → UI 크롬 강조
      보드 회색        #8A8A92
      모드 카드 앰버/레드 #E0A030 / #D65A4A → 의미색
@@ -398,7 +398,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
       <p class="h1-sub">자석 물리 턴제 보드게임</p>
 
       <p class="hero-lede">
-        보드 위에 자석 공을 하나씩 놓아 상대의 공을 끌어당기고, 자기 Magnetic Ball을 먼저 0으로 만드는 쪽이 이기는
+        보드 위에 자석공을 하나씩 놓아 상대의 공을 끌어당기고, 자기 자석공을 먼저 0으로 만드는 쪽이 이기는
         2인 턴제 게임입니다. <em>실제로 Google Play에 출시해 운영 중</em>이며,
         이 페이지는 출시 이후 <em>Unity 2022에서 Unity 6로 엔진을 올리고 코드를 정리하는 과정</em>에서
         마주친 문제들을 중심으로 정리한 기록입니다.
@@ -474,14 +474,14 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
       <img src="assets/shot3.jpg" alt="게임 설정 화면 — Piece Count, Piece Count_AI, Waiting Time, Max Turn 드롭다운과 Back/Play 버튼">
       <figcaption>
         <span class="cap-k">Game Setting</span>
-        <span class="cap-v">Magnetic Ball 수, AI Magnetic Ball 수, 턴 대기 시간, 최대 턴을 경기 전에 정한다. 최대 턴은 무제한으로도 둘 수 있다.</span>
+        <span class="cap-v">자석공 수, AI 자석공 수, 턴 대기 시간, 최대 턴을 경기 전에 정한다. 최대 턴은 무제한으로도 둘 수 있다.</span>
       </figcaption>
     </figure>
     <figure class="shot">
-      <img src="assets/shot4.jpg" alt="인게임 화면 — 격자 보드 위에 자석 공 네 개가 놓여 있고 좌우에 Player 1과 AI의 Magnetic Ball 수와 타이머가 표시된다">
+      <img src="assets/shot4.jpg" alt="인게임 화면 — 격자 보드 위에 자석공 네 개가 놓여 있고 좌우에 Player 1과 AI의 자석공 수와 타이머가 표시된다">
       <figcaption>
         <span class="cap-k">In-Game</span>
-        <span class="cap-v">양쪽에 남은 Magnetic Ball 수와 대기 타이머, 상단에 현재 턴과 최대 턴을 띄운다. 현재 턴인 쪽에 붉은 테두리가 들어온다.</span>
+        <span class="cap-v">양쪽에 남은 자석공 수와 대기 타이머, 상단에 현재 턴과 최대 턴을 띄운다. 현재 턴인 쪽에 붉은 테두리가 들어온다.</span>
       </figcaption>
     </figure>
   </div>
@@ -503,17 +503,17 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
     <p class="eyebrow">Rules</p>
     <h2>한 턴에 일어나는 일</h2>
     <p>
-      규칙은 단순하지만, 공이 붙는 순간 Magnetic Ball이 늘어난다는 점 때문에
+      규칙은 단순하지만, 공이 붙는 순간 자석공이 늘어난다는 점 때문에
       "많이 붙이는 것"이 아니라 "붙지 않게 놓는 것"이 실력이 되는 게임입니다.
     </p>
   </div>
 
   <div class="loop">
-    <div class="loop-node"><b>1 · 배치</b><span>자기 턴에 보드의 빈 자리를 터치해 자석 공을 하나 놓는다. 내 Magnetic Ball은 1 줄어든다.</span></div>
+    <div class="loop-node"><b>1 · 배치</b><span>자기 턴에 보드의 빈 자리를 터치해 자석공을 하나 놓는다. 내 자석공은 1 줄어든다.</span></div>
     <div class="loop-arrow">→</div>
     <div class="loop-node"><b>2 · 자력</b><span>놓인 공들이 서로 끌어당기고 밀어낸다. 물리는 대기 시간 동안 계속 계산된다.</span></div>
     <div class="loop-arrow">→</div>
-    <div class="loop-node"><b>3 · 충돌</b><span>공끼리 붙으면 붙은 개수만큼 현재 턴 플레이어의 Magnetic Ball이 늘어난다.</span></div>
+    <div class="loop-node"><b>3 · 충돌</b><span>공끼리 붙으면 붙은 개수만큼 현재 턴 플레이어의 자석공이 늘어난다.</span></div>
     <div class="loop-arrow">→</div>
     <div class="loop-node"><b>4 · 턴 종료</b><span>설정한 대기 시간이 지나면 차례가 상대에게 넘어간다.</span></div>
   </div>
@@ -521,11 +521,11 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
   <div class="wincond">
     <div class="a">
       <h4>기본 승리 조건</h4>
-      <p>두 플레이어 중 <strong>Magnetic Ball이 먼저 0이 된 쪽</strong>이 승리합니다. Magnetic Ball은 자기 턴에만 변하므로, 0이 된 사람은 언제나 현재 턴 플레이어입니다.</p>
+      <p>두 플레이어 중 <strong>자석공이 먼저 0이 된 쪽</strong>이 승리합니다. 자석공은 자기 턴에만 변하므로, 0이 된 사람은 언제나 현재 턴 플레이어입니다.</p>
     </div>
     <div class="b">
       <h4>최대 턴 도달 시</h4>
-      <p>최대 턴까지 아무도 Magnetic Ball을 다 털어내지 못하면 <strong>남은 Magnetic Ball이 더 적은 쪽</strong>이 이기고, 같으면 무승부입니다. — 이 규칙에서 실제 버그가 나왔습니다(아래 참조).</p>
+      <p>최대 턴까지 아무도 자석공을 다 털어내지 못하면 <strong>남은 자석공이 더 적은 쪽</strong>이 이기고, 같으면 무승부입니다. — 이 규칙에서 실제 버그가 나왔습니다(아래 참조).</p>
     </div>
   </div>
 </section>
@@ -707,9 +707,9 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
 <section id="pooling">
   <div class="sec-head">
     <p class="eyebrow">Core System</p>
-    <h2>자석볼 스폰과 풀링</h2>
+    <h2>자석공 스폰과 풀링</h2>
     <p>
-      한 판에서 자석볼은 최대 수십 개가 생겼다 사라집니다. 직접 만든 <code>MemoryPool</code>을
+      한 판에서 자석공은 최대 수십 개가 생겼다 사라집니다. 직접 만든 <code>MemoryPool</code>을
       엔진 기본 <code>UnityEngine.Pool.ObjectPool&lt;T&gt;</code>로 교체하면서,
       그 API가 채워 주지 않는 두 가지를 직접 메웠습니다.
     </p>
@@ -718,11 +718,11 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
   <div class="block">
     <figure class="code">
       <figcaption><b>MyAssets/Scripts/Magnet/MagnetBallSpawner.cs</b><span>C#</span></figcaption>
-<pre><code><span class="c">/// 현재 판에 나와 있는 자석볼. ObjectPool&lt;T&gt;는 활성 객체를 열거하는 API가 없어서</span>
+<pre><code><span class="c">/// 현재 판에 나와 있는 자석공. ObjectPool&lt;T&gt;는 활성 객체를 열거하는 API가 없어서</span>
 <span class="c">/// Get/Release 콜백에서 직접 관리한다.</span>
 <span class="k">private readonly</span> <span class="t">List</span>&lt;<span class="t">GameObject</span>&gt; activeMagnetBalls = <span class="k">new</span>();
 
-<span class="c">/// 위 목록과 같은 순서로 유지되는 MagnetContact 캐시. 턴이 끝날 때마다 자석볼 전체를</span>
+<span class="c">/// 위 목록과 같은 순서로 유지되는 MagnetContact 캐시. 턴이 끝날 때마다 자석공 전체를</span>
 <span class="c">/// 훑으며 GetComponent를 부르지 않도록, 풀에서 꺼낼 때 한 번만 찾아 둔다.</span>
 <span class="k">private readonly</span> <span class="t">List</span>&lt;<span class="t">MagnetContact</span>&gt; activeMagnetContacts = <span class="k">new</span>();
 
@@ -771,7 +771,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
 
     <figure class="code">
       <figcaption><b>MagnetBallSpawner.InstantiateMagnetBall</b><span>C#</span></figcaption>
-<pre><code><span class="c">/// 판 시작 전, 필요한 개수만큼 자석볼을 미리 만들어 둔다.</span>
+<pre><code><span class="c">/// 판 시작 전, 필요한 개수만큼 자석공을 미리 만들어 둔다.</span>
 <span class="k">public void</span> InstantiateMagnetBall(<span class="k">int</span> magnetBallCount)
 {
     <span class="k">int</span> shortage = magnetBallCount - pool.CountAll;
@@ -848,7 +848,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
 
     <figure class="code">
       <figcaption><b>Match/MatchTimer.cs</b><span>C#</span></figcaption>
-<pre><code><span class="c">/// 자석볼을 놓은 뒤 결과가 확정될 때까지 기다리는 시간을 재는 타이머.</span>
+<pre><code><span class="c">/// 자석공을 놓은 뒤 결과가 확정될 때까지 기다리는 시간을 재는 타이머.</span>
 <span class="c">/// MonoBehaviour가 아닌 순수 C# 클래스라 프레임 진행은</span>
 <span class="c">/// 소유자(GameDirector)가 Tick으로 넣어준다.</span>
 <span class="k">public sealed class</span> <span class="t">MatchTimer</span>
@@ -864,7 +864,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
 
 <span class="hl-ok">    <span class="k">public void</span> Tick(<span class="k">float</span> deltaTime) =&gt; remainingTime -= deltaTime;</span>
 
-    <span class="c">/// 자석볼끼리 달라붙는 등 결과가 아직 확정되지 않았을 때</span>
+    <span class="c">/// 자석공끼리 달라붙는 등 결과가 아직 확정되지 않았을 때</span>
     <span class="c">/// 대기 시간을 늘린다.</span>
 <span class="hl-ok">    <span class="k">public void</span> ExtendTime(<span class="k">float</span> seconds) =&gt; remainingTime += seconds;</span>
 }</code></pre>
@@ -875,7 +875,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
     <div class="measure">
       <h3>공이 붙으면 턴이 조금 길어진다</h3>
       <p class="lede small" style="margin-top:8px">
-        자석볼이 서로 달라붙는 중이라면 아직 결과가 확정된 게 아닙니다.
+        자석공이 서로 달라붙는 중이라면 아직 결과가 확정된 게 아닙니다.
         충돌을 감지한 쪽에서 타이머를 직접 늘려, <strong>물리가 안정될 때까지 턴 종료를 미룹니다.</strong>
         <code>MatchTimer.ExtendTime</code>이 존재하는 이유가 이것입니다.
       </p>
@@ -889,7 +889,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
 
     <span class="k">if</span> (collision.collider.CompareTag(<span class="s">"Magnet"</span>))
     {
-<span class="hl-ok">        <span class="c">// 자석볼끼리 붙으면 그만큼 확정 대기 시간을 늘려준다.</span></span>
+<span class="hl-ok">        <span class="c">// 자석공끼리 붙으면 그만큼 확정 대기 시간을 늘려준다.</span></span>
 <span class="hl-ok">        <span class="t">GameDirector</span>.Instance.ExtendConfirmTime(</span>
 <span class="hl-ok">            <span class="t">GameManager</span>.Instance.CurrentSetting.waitingTime * <span class="n">0.5f</span>);</span>
 
@@ -899,7 +899,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
     </figure>
 
     <p class="codenote">
-      <code>isContact</code> 플래그로 한 자석볼당 한 번만 연장되게 막습니다.
+      <code>isContact</code> 플래그로 한 자석공당 한 번만 연장되게 막습니다.
       이게 없으면 공 하나가 여러 번 충돌할 때마다 턴이 계속 늘어납니다.
     </p>
   </div>
@@ -911,7 +911,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
     <p class="eyebrow">Core System</p>
     <h2>AI는 어디에 놓는가</h2>
     <p>
-      이 게임에서 나쁜 수는 "이미 놓인 공 근처에 놓는 것"입니다. 붙으면 내 Magnetic Ball이 늘어나니까요.
+      이 게임에서 나쁜 수는 "이미 놓인 공 근처에 놓는 것"입니다. 붙으면 내 자석공이 늘어나니까요.
       그래서 AI의 판단은 <strong>비어 있는 자리 중 기존 공에서 가장 멀리 떨어진 곳 고르기</strong>로 환원됩니다.
     </p>
   </div>
@@ -1136,7 +1136,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
         </div>
         <div>
           <dt>증상</dt>
-          <dd>출시본은 최대 턴에 도달하면 Magnetic Ball 수와 무관하게 <b>항상 Player 2(AI)가 승리</b>했다.</dd>
+          <dd>출시본은 최대 턴에 도달하면 자석공 수와 무관하게 <b>항상 Player 2(AI)가 승리</b>했다.</dd>
         </div>
         <div>
           <dt>원인</dt>
@@ -1167,7 +1167,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
 
         <figure class="code">
           <figcaption><b>수정본 · Match/GameDirector.cs</b><span>After</span></figcaption>
-<pre><code><span class="c">/// 남은 Magnetic Ball이 더 적은 쪽이 이기고, 같으면 무승부다.</span>
+<pre><code><span class="c">/// 남은 자석공이 더 적은 쪽이 이기고, 같으면 무승부다.</span>
 <span class="k">private</span> <span class="t">E_GameState</span> DecideWinnerByFewestPieces()
 {
     <span class="k">int</span> p1 = playerList[__PLAYER__1].PieceCount;
@@ -1406,7 +1406,7 @@ footer .credit{flex-basis:100%; line-height:1.7; letter-spacing:.02em}
     }
     ctx.setLineDash([]);
 
-    // 자석 공 — 스크린샷의 청동 각인 톤
+    // 자석공 — 스크린샷의 청동 각인 톤
     for (i = 0; i < magnets.length; i++) {
       a = magnets[i];
 

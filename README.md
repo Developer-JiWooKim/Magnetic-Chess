@@ -1,6 +1,6 @@
 # Magnetic Chess
 
-보드 위에 자석 공을 놓아 상대의 공을 끌어당기고, 자기 Magnetic Ball을 먼저 0으로 만드는 쪽이 이기는 2인 턴제 보드게임입니다.
+보드 위에 자석공을 놓아 상대의 공을 끌어당기고, 자기 자석공을 먼저 0으로 만드는 쪽이 이기는 2인 턴제 보드게임입니다.
 Google Play에 출시해 운영 중이며, 1인 개발했습니다.
 
 **[🎮 Google Play에서 플레이하기](https://play.google.com/store/apps/details?id=com.developerjw.magenticchess.mobile)**
@@ -32,7 +32,7 @@ Unity 2022 → Unity 6 마이그레이션 과정에서 찾아낸 버그들을 �
 ```
 Assets/MyAssets/Scripts/
 ├── Core/       데이터 저장, 게임 설정, 사운드, 씬 전환, Singleton<T>   (7)
-├── Magnet/     길버트 힘 계산, 자석볼 스폰·풀링, 충돌 판정             (5)
+├── Magnet/     길버트 힘 계산, 자석공 스폰·풀링, 충돌 판정             (5)
 ├── Match/      경기 진행, TurnStateMachine, MatchTimer, 인게임 UI      (12)
 ├── MainMenu/   타이틀, 모드 선택, 게임 설정 패널                      (14)
 ├── UI/         공용 패널(UIPanel 기반), 메뉴바, 옵션                  (11)

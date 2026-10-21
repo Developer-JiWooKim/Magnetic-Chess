@@ -11,14 +11,14 @@ namespace Assets.MyAssets.Scripts.Magnet
         private ObjectPool<GameObject> pool;
 
         /// <summary>
-        /// 현재 판에 나와 있는 자석볼. ObjectPool&lt;T&gt;는 활성 객체를 열거하는 API가 없어서
+        /// 현재 판에 나와 있는 자석공. ObjectPool&lt;T&gt;는 활성 객체를 열거하는 API가 없어서
         /// Get/Release 콜백에서 직접 관리한다.
         /// </summary>
         private readonly List<GameObject> activeMagnetBalls = new();
         public IReadOnlyList<GameObject> ActiveMagnetBalls => activeMagnetBalls;
 
         /// <summary>
-        /// 위 목록과 같은 순서로 유지되는 MagnetContact 캐시. 턴이 끝날 때마다 자석볼 전체를
+        /// 위 목록과 같은 순서로 유지되는 MagnetContact 캐시. 턴이 끝날 때마다 자석공 전체를
         /// 훑으며 GetComponent를 부르지 않도록, 풀에서 꺼낼 때 한 번만 찾아 둔다.
         /// </summary>
         private readonly List<MagnetContact> activeMagnetContacts = new();
@@ -80,7 +80,7 @@ namespace Assets.MyAssets.Scripts.Magnet
         }
 
         /// <summary>
-        /// 판 시작 전, 필요한 개수만큼 자석볼을 미리 만들어 둔다.
+        /// 판 시작 전, 필요한 개수만큼 자석공을 미리 만들어 둔다.
         /// </summary>
         public void InstantiateMagnetBall(int magnetBallCount)
         {

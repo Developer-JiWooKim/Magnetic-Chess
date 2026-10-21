@@ -25,7 +25,7 @@
 
 자석 물리 시뮬레이션의 핵심 루프가 **매 물리 프레임마다 씬 전체를 검색**하고 있었다. `FindObjectsOfType`은 씬의 모든 GameObject를 순회하는 O(n) 연산인데, 이것이 `FixedUpdate`(기본 초당 50회) 안에서 호출된 뒤 다시 O(n²) 자력 계산으로 이어졌다.
 
-또 자석볼끼리 충돌할 때마다 `FindObjectOfType<GameDirector>()`로 씬을 검색해 매니저를 찾고 있었다. 자석볼이 수십 개 붙는 게임 특성상 충돌은 짧은 시간에 대량으로 발생한다.
+또 자석공끼리 충돌할 때마다 `FindObjectOfType<GameDirector>()`로 씬을 검색해 매니저를 찾고 있었다. 자석공이 수십 개 붙는 게임 특성상 충돌은 짧은 시간에 대량으로 발생한다.
 
 ### ② 이전 코드
 
@@ -82,7 +82,7 @@ for (int i = 0; i < magnets.Count; i++) { /* ... */ }
 // MagnetContact.cs
 if (collision.collider.CompareTag("Magnet"))
 {
-    // 자석볼끼리 붙으면 그만큼 확정 대기 시간을 늘려준다.
+    // 자석공끼리 붙으면 그만큼 확정 대기 시간을 늘려준다.
     GameDirector.Instance.confirmTime += GameManager.Instance.CurrentSetting.waitingTime / 2;
     isContact = true;
 }
@@ -90,7 +90,7 @@ if (collision.collider.CompareTag("Magnet"))
 
 ### ④ 판단 근거
 
-**`OnEnable`/`OnDisable`을 고른 이유가 핵심이다.** 이 게임의 자석볼은 오브젝트 풀로 관리되어 `SetActive(false)`로 비활성화된다. 그런데 `FindObjectsOfType<T>()`는 **기본적으로 비활성 오브젝트를 제외**한다. 즉 기존 코드는 "활성 자석만" 계산하고 있었다.
+**`OnEnable`/`OnDisable`을 고른 이유가 핵심이다.** 이 게임의 자석공은 오브젝트 풀로 관리되어 `SetActive(false)`로 비활성화된다. 그런데 `FindObjectsOfType<T>()`는 **기본적으로 비활성 오브젝트를 제외**한다. 즉 기존 코드는 "활성 자석만" 계산하고 있었다.
 
 `OnEnable`/`OnDisable` 시점 등록은 정확히 이 집합(활성 오브젝트만)과 일치한다. 만약 `Awake`/`OnDestroy`에 등록했다면 풀에서 잠자는 자석까지 계산에 포함되어 **물리 동작이 조용히 달라졌을 것이다.** 성능 최적화에서 동작이 바뀌면 최적화가 아니라 버그다.
 
@@ -695,7 +695,7 @@ namespace Assets.MyAssets.Scripts.Core
 
 ### ① 문제 상황
 
-자석볼 오브젝트 풀이 **3단 래퍼**로 되어 있었다.
+자석공 오브젝트 풀이 **3단 래퍼**로 되어 있었다.
 
 ```
 MemoryPool (직접 구현한 범용 풀)
@@ -769,7 +769,7 @@ public sealed class MagnetBallSpawner : MonoBehaviour
     private ObjectPool<GameObject> pool;
 
     /// <summary>
-    /// 현재 판에 나와 있는 자석볼. ObjectPool<T>는 활성 객체를 열거하는 API가 없어서
+    /// 현재 판에 나와 있는 자석공. ObjectPool<T>는 활성 객체를 열거하는 API가 없어서
     /// Get/Release 콜백에서 직접 관리한다.
     /// </summary>
     private readonly List<GameObject> activeMagnetBalls = new List<GameObject>();
@@ -824,9 +824,9 @@ if (isContact)
 
 ### ④ 판단 근거
 
-**`ObjectPool<T>`만으로는 부족했던 지점.** Unity 내장 `ObjectPool<T>`에는 **활성 객체를 열거하는 API가 없다**(`CountActive`로 개수만 알 수 있다). 그런데 `GameDirector`는 "접촉된 자석볼을 찾아 반납"해야 하므로 활성 목록 순회가 반드시 필요하다. 그래서 `activeMagnetBalls` 리스트를 직접 들고 있되, **`actionOnGet`/`actionOnRelease` 콜백 안에서 자동으로 갱신**되게 했다. 호출부가 등록/해제를 신경 쓸 필요가 없어 누락 위험이 없다.
+**`ObjectPool<T>`만으로는 부족했던 지점.** Unity 내장 `ObjectPool<T>`에는 **활성 객체를 열거하는 API가 없다**(`CountActive`로 개수만 알 수 있다). 그런데 `GameDirector`는 "접촉된 자석공을 찾아 반납"해야 하므로 활성 목록 순회가 반드시 필요하다. 그래서 `activeMagnetBalls` 리스트를 직접 들고 있되, **`actionOnGet`/`actionOnRelease` 콜백 안에서 자동으로 갱신**되게 했다. 호출부가 등록/해제를 신경 쓸 필요가 없어 누락 위험이 없다.
 
-그럼에도 `ObjectPool<T>`를 쓴 이유는, 빈 슬롯 선형 탐색·`isActive` 플래그 관리·null 가드 같은 **풀의 기계적인 부분을 전부 검증된 표준 구현에 맡길 수 있기 때문**이다. 남은 코드는 "이 게임에서 자석볼을 어떻게 다루는가"만 담게 됐다.
+그럼에도 `ObjectPool<T>`를 쓴 이유는, 빈 슬롯 선형 탐색·`isActive` 플래그 관리·null 가드 같은 **풀의 기계적인 부분을 전부 검증된 표준 구현에 맡길 수 있기 때문**이다. 남은 코드는 "이 게임에서 자석공을 어떻게 다루는가"만 담게 됐다.
 
 **동작 동일성을 위해 의도적으로 유지한 것들:**
 - 반납 시 `position = Vector3.zero` → `SetActive(false)` **순서**를 원본 그대로 유지했다. 순서를 바꾸면 비활성화 전 이동으로 발생하던 `OnTriggerExit`(스폰 포인트 해제) 타이밍이 달라질 수 있다.
@@ -975,7 +975,7 @@ public sealed class TurnStateMachine
 private readonly MatchTimer matchTimer = new MatchTimer();
 private readonly TurnStateMachine turnState = new TurnStateMachine();
 
-/// <summary>자석볼 충돌처럼 결과가 아직 확정되지 않았을 때 대기 시간을 늘린다(MagnetContact에서 호출).</summary>
+/// <summary>자석공 충돌처럼 결과가 아직 확정되지 않았을 때 대기 시간을 늘린다(MagnetContact에서 호출).</summary>
 public void ExtendConfirmTime(float seconds) => matchTimer.ExtendTime(seconds);
 
 private IEnumerator StartTimer()
@@ -992,7 +992,7 @@ private IEnumerator StartTimer()
     // ...
 }
 
-// 승패 · 턴 전환 · Magnetic Ball 수 증감이 전부 상태머신 API를 거친다
+// 승패 · 턴 전환 · 자석공 수 증감이 전부 상태머신 API를 거친다
 if (turnState.IsMaxTurnReached(currentSetting.maxTurn)) { isPlaying = false; }
 turnState.FinishWithCurrentPlayerAsWinner();
 turnState.IncreaseTurnCount();
@@ -1029,7 +1029,7 @@ GameDirector.Instance.ExtendConfirmTime(GameManager.Instance.CurrentSetting.wait
 - 턴 상태 필드 3개(`gameState`/`winPlayer`/`turnCount`)가 `turnState` 하나로 대체
 - 승패 판정·최대 턴 도달 판정·턴 전환이 **이름 있는 메서드**가 되어, `if (maxTurn == turnCount && gameState == Player_2)` 같은 조건식을 매번 해석할 필요가 없어짐
 - 씬/프리팹 변경 **0건**, 에디터 수동 작업 **0건**
-- 컴파일 검증 오류 0개. 플레이 테스트로 타이머(자석볼 접촉 시 시간 연장 포함) 정상 동작 확인
+- 컴파일 검증 오류 0개. 플레이 테스트로 타이머(자석공 접촉 시 시간 연장 포함) 정상 동작 확인
 
 ### ⑥ 계획 대비 달라진 점 — 빌드 검증이 무의미했다는 사실 발견
 
@@ -1055,14 +1055,14 @@ Phase 1~4에서 보고한 검증이 모두 이 상태였다. 대체 수단으로
 
 ### ① 문제 상황
 
-Phase 5 이후 플레이 테스트에서 발견. **최대 턴에 도달해 게임이 끝나면 Magnetic Ball 수와 무관하게 항상 AI(Player_2)가 승자로 표시**됐다.
+Phase 5 이후 플레이 테스트에서 발견. **최대 턴에 도달해 게임이 끝나면 자석공 수와 무관하게 항상 AI(Player_2)가 승자로 표시**됐다.
 
 먼저 이 버그가 리팩토링으로 생긴 것인지 확인했다. 리팩토링 이전 커밋(출시판 코드)에 동일한 로직이 있었다 — **출시 당시부터 존재하던 결함**이고, 리팩토링은 동작을 그대로 보존했을 뿐이다.
 
 ### ② 이전 코드
 
 ```csharp
-// Magnetic Ball이 0이 된 사람이 있으면 종료
+// 자석공이 0이 된 사람이 있으면 종료
 if (playerList.Find(player => player.PieceCount <= 0) != null)
 {
     isPlaying = false;
@@ -1085,7 +1085,7 @@ if (isPlaying == false)
 }
 ```
 
-두 종료 조건이 하나의 `isPlaying` 플래그로 합쳐진 뒤, 승자를 **무조건 현재 턴 플레이어**로 정하고 있었다. Magnetic Ball 수 비교가 코드에 아예 없다.
+두 종료 조건이 하나의 `isPlaying` 플래그로 합쳐진 뒤, 승자를 **무조건 현재 턴 플레이어**로 정하고 있었다. 자석공 수 비교가 코드에 아예 없다.
 
 ### ③ 변경 후 코드
 
@@ -1095,7 +1095,7 @@ bool someoneEmptiedPieces = playerList.Find(player => player.PieceCount <= 0) !=
 bool maxTurnReached = currentSetting.maxTurn < __TURN_INFINITY__
                       && turnState.IsMaxTurnReached(currentSetting.maxTurn);
 
-// Magnetic Ball을 다 털어낸 사람이 승리한다. Magnetic Ball 수는 자기 턴에만 변하므로(놓으면 -1, 붙으면 +N)
+// 자석공을 다 털어낸 사람이 승리한다. 자석공 수는 자기 턴에만 변하므로(놓으면 -1, 붙으면 +N)
 // 0이 된 사람은 항상 현재 턴 플레이어다.
 if (someoneEmptiedPieces)
 {
@@ -1103,7 +1103,7 @@ if (someoneEmptiedPieces)
     turnState.FinishWith(turnState.Current);
     GameFSM();
 }
-// 최대 턴까지 아무도 못 털어냈으면 남은 Magnetic Ball이 더 적은 쪽이 승리한다.
+// 최대 턴까지 아무도 못 털어냈으면 남은 자석공이 더 적은 쪽이 승리한다.
 else if (maxTurnReached)
 {
     isPlaying = false;
@@ -1115,7 +1115,7 @@ else { /* 턴 전환 */ }
 
 ```csharp
 /// <summary>
-/// 최대 턴까지 승부가 나지 않았을 때의 승자. 남은 Magnetic Ball이 더 적은 쪽이 이기고, 같으면 무승부다.
+/// 최대 턴까지 승부가 나지 않았을 때의 승자. 남은 자석공이 더 적은 쪽이 이기고, 같으면 무승부다.
 /// </summary>
 private E_GameState DecideWinnerByFewestPieces()
 {
@@ -1150,19 +1150,19 @@ public void FinishWith(E_GameState winner) { WinPlayer = winner; Current = E_Gam
 
 ### ④ 판단 근거
 
-**게임 규칙(사용자 확인):** 번갈아 자석을 놓고(놓을 때마다 Magnetic Ball -1), 대기 시간 동안 부딪힌 자석 개수가 자기 Magnetic Ball에 추가된다(+N). **최대 턴 전에 자기 Magnetic Ball이 0이 되면 그 사람이 승리**하고, **최대 턴까지 아무도 0이 못 되면 남은 Magnetic Ball이 더 적은 사람이 승리**한다. 즉 Magnetic Ball을 털어내는 것이 목표다.
+**게임 규칙(사용자 확인):** 번갈아 자석을 놓고(놓을 때마다 자석공 -1), 대기 시간 동안 부딪힌 자석 개수가 자기 자석공에 추가된다(+N). **최대 턴 전에 자기 자석공이 0이 되면 그 사람이 승리**하고, **최대 턴까지 아무도 0이 못 되면 남은 자석공이 더 적은 사람이 승리**한다. 즉 자석공을 털어내는 것이 목표다.
 
-**두 증상 중 하나는 사실 정상 동작이었다.** "AI Magnetic Ball이 0이 되자 AI 승리"도 함께 보고됐는데, 분석해보니 이건 규칙대로다. Magnetic Ball 수는 **자기 턴에만** 변하므로(놓기 -1, 흡수 +N), 0이 되는 사람은 필연적으로 그 시점의 현재 턴 플레이어다. 따라서 기존의 `winPlayer = gameState`가 이 경우에는 **우연히** 규칙과 일치했다. 이 관계를 코드 주석으로 남겨, 나중에 읽는 사람이 `FinishWith(turnState.Current)`를 보고 의아해하지 않도록 했다.
+**두 증상 중 하나는 사실 정상 동작이었다.** "AI 자석공이 0이 되자 AI 승리"도 함께 보고됐는데, 분석해보니 이건 규칙대로다. 자석공 수는 **자기 턴에만** 변하므로(놓기 -1, 흡수 +N), 0이 되는 사람은 필연적으로 그 시점의 현재 턴 플레이어다. 따라서 기존의 `winPlayer = gameState`가 이 경우에는 **우연히** 규칙과 일치했다. 이 관계를 코드 주석으로 남겨, 나중에 읽는 사람이 `FinishWith(turnState.Current)`를 보고 의아해하지 않도록 했다.
 
 **진짜 결함은 최대 턴 경로였다.** `IsMaxTurnReached`는 `Current == Player_2`일 때만 참이므로, 이 경로로 끝나면 승자가 **항상 Player_2로 고정**된다. AI 모드에서는 무조건 AI 승리였다.
 
-**무승부 처리는 규칙에 없어 직접 정했다.** 최대 턴에서 양쪽 Magnetic Ball 수가 같을 수 있는데 규칙에 언급이 없었다. 어느 한쪽을 임의로 고르는 대신 `E_GameState.None`을 승자로 두고 결과 화면에 `DRAW`로 표시하도록 했다.
+**무승부 처리는 규칙에 없어 직접 정했다.** 최대 턴에서 양쪽 자석공 수가 같을 수 있는데 규칙에 언급이 없었다. 어느 한쪽을 임의로 고르는 대신 `E_GameState.None`을 승자로 두고 결과 화면에 `DRAW`로 표시하도록 했다.
 
 ### ⑤ 결과
 
-- 최대 턴 종료 시 **Magnetic Ball 수를 실제로 비교**해 승자를 정한다
+- 최대 턴 종료 시 **자석공 수를 실제로 비교**해 승자를 정한다
 - 무승부가 표현 가능해졌다(`WINNER - DRAW`)
-- 승자 판정 책임이 분리됐다 — `TurnStateMachine`은 "확정"만 하고, "누가 이겼는가"는 Magnetic Ball 수를 아는 `GameDirector`가 판단한다
+- 승자 판정 책임이 분리됐다 — `TurnStateMachine`은 "확정"만 하고, "누가 이겼는가"는 자석공 수를 아는 `GameDirector`가 판단한다
 - `EndBattle()`의 중첩 분기가 한 줄로 축소
 - 컴파일 검증 오류 0개
 
@@ -1180,7 +1180,7 @@ public void FinishWith(E_GameState winner) { WinPlayer = winner; Current = E_Gam
 
 프로젝트 전반의 최적화 지점을 점검한 결과, **런타임 비용이 `MagnetWorld.FixedUpdate` 한 곳에 압도적으로 몰려** 있었다. 나머지(GC 할당, `GetComponent` 반복 등)는 상대적으로 사소했다.
 
-이 루프는 활성 자석볼 n개에 대해 **매 물리 프레임(초 50회) O(n²) 순회**를 돈다. 자석볼이 40개면 1600쌍 × 50 = **초당 8만 회**의 쌍 계산이다. 그런데 그 안에서 쌍마다 다음이 낭비되고 있었다:
+이 루프는 활성 자석공 n개에 대해 **매 물리 프레임(초 50회) O(n²) 순회**를 돈다. 자석공이 40개면 1600쌍 × 50 = **초당 8만 회**의 쌍 계산이다. 그런데 그 안에서 쌍마다 다음이 낭비되고 있었다:
 
 - **sqrt 2회** — `dir.magnitude`로 거리를 구하고, 다시 `dir.normalized`로 방향을 구하면서 내부에서 또 한 번
 - **네이티브 호출 6회** — `transform.position` 4회 + `transform.parent` 2회. C#에서 C++ 엔진으로 넘어가는 호출이라 일반 필드 접근보다 훨씬 비싸다
@@ -1405,7 +1405,7 @@ private void FixedUpdate()
 
 1. **수식 등가성 (수치 검증).** 옛 식과 새 식을 C# `float` 연산으로 랜덤 20만 쌍에 대해 비교 → **최대 상대오차 `3.9e-07`**. float 엡실론(1.19e-07)의 몇 배 수준이므로 누적 반올림 오차일 뿐, 두 식은 동일하다.
 2. **컴파일 검증.** 독립 검증 프로젝트로 `Assets/MyAssets/Scripts/**` 전체 빌드 → **오류 0개**. 우리 소스 파일에서 나온 경고가 로그에 실제로 찍히는 것을 확인해 "빌드 대상에서 조용히 제외되는" 함정을 배제했다.
-3. **플레이 테스트.** Unity 에디터에서 실제 플레이 — **자석볼이 붙는 조작감이 이전과 구분되지 않음.** 최적화가 동작을 보존했음을 확인했다.
+3. **플레이 테스트.** Unity 에디터에서 실제 플레이 — **자석공이 붙는 조작감이 이전과 구분되지 않음.** 최적화가 동작을 보존했음을 확인했다.
 
 ### ⑥ 계획 대비 달라진 점
 
