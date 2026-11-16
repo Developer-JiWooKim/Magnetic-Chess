@@ -30,7 +30,7 @@ Unity 2022 → Unity 6 마이그레이션 과정에서 찾아낸 버그들을 �
 ## 저장소 구성
 
 ```
-Assets/MyAssets/Scripts/
+Scripts/
 ├── Core/       데이터 저장, 게임 설정, 사운드, 씬 전환, Singleton<T>   (7)
 ├── Magnet/     길버트 힘 계산, 자석공 스폰·풀링, 충돌 판정             (5)
 ├── Match/      경기 진행, TurnStateMachine, MatchTimer, 인게임 UI      (12)
@@ -41,12 +41,14 @@ docs/              포트폴리오 페이지 (GitHub Pages)
 REFACTORING_LOG.md Unity 6 이식 과정의 리팩토링 기록
 ```
 
+`Scripts/`는 원래 프로젝트의 `Assets/MyAssets/Scripts/`를 루트로 옮긴 것이라, 네임스페이스는 원래 경로 기준(`Assets.MyAssets.Scripts.*`)입니다.
+
 먼저 보면 좋은 파일:
 
-- [`Magnet/MagnetWorld.cs`](Assets/MyAssets/Scripts/Magnet/MagnetWorld.cs) — 매 물리 프레임 O(n²) 자력 계산, 네이티브 호출 캐싱
-- [`Magnet/MagnetBallSpawner.cs`](Assets/MyAssets/Scripts/Magnet/MagnetBallSpawner.cs) — `ObjectPool<T>` 기반 풀링과 사전 생성
-- [`Match/TurnStateMachine.cs`](Assets/MyAssets/Scripts/Match/TurnStateMachine.cs) · [`Match/MatchTimer.cs`](Assets/MyAssets/Scripts/Match/MatchTimer.cs) — Unity API에 의존하지 않는 순수 C# 규칙 클래스
-- [`AI/AI_FSM.cs`](Assets/MyAssets/Scripts/AI/AI_FSM.cs) — 안전 반경을 좁혀 가며 배치 지점을 찾는 AI
+- [`Magnet/MagnetWorld.cs`](Scripts/Magnet/MagnetWorld.cs) — 매 물리 프레임 O(n²) 자력 계산, 네이티브 호출 캐싱
+- [`Magnet/MagnetBallSpawner.cs`](Scripts/Magnet/MagnetBallSpawner.cs) — `ObjectPool<T>` 기반 풀링과 사전 생성
+- [`Match/TurnStateMachine.cs`](Scripts/Match/TurnStateMachine.cs) · [`Match/MatchTimer.cs`](Scripts/Match/MatchTimer.cs) — Unity API에 의존하지 않는 순수 C# 규칙 클래스
+- [`AI/AI_FSM.cs`](Scripts/AI/AI_FSM.cs) — 안전 반경을 좁혀 가며 배치 지점을 찾는 AI
 
 ---
 
